@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-windows:
@@ -37,10 +37,18 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
 
-      - name: Upload Windows artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: intake-kiosk-windows
-          path: electron/dist/*.exe
-          if-no-files-found: error
-          retention-days: 14
+      # GitHub Actions artifacts require authentication to download. Publish the
+      # executable as a release asset so anyone can download it from the public
+      # repository's Releases page.
+      - name: Publish public Windows download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view latest >/dev/null 2>&1; then
+            gh release create latest \
+              --target "$GITHUB_SHA" \
+              --title "Latest Windows build" \
+              --notes "Latest Windows build from commit $GITHUB_SHA" \
+              --latest=false
+          fi
+          gh release upload latest dist/*.exe --clobber
