@@ -1,0 +1,35 @@
+{
+  "name": "intake-kiosk",
+  "version": "1.0.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "postinstall": "node node_modules/electron/install.js",
+    "dist:win": "electron-builder --win portable"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^26.18.0"
+  },
+  "allowScripts": {
+    "electron@31.7.7": true
+  },
+  "build": {
+    "appId": "com.example.intakekiosk",
+    "productName": "Intake Kiosk",
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "portable"
+    }
+  }
+}
